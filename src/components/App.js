@@ -11,6 +11,7 @@ import { api } from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -136,8 +137,13 @@ function App() {
                     <Header/>
 
                     <Switch>
+                        <ProtectedRoute
+                            exact path="/"
+                            loggedIn={loggedIn}
+                            component={Main}
+                        />
                         <Route exact path="/">
-                            {loggedIn ? <Redirect to="/ducks" /> : <Redirect to="/login" />}
+                            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
                         </Route>
                         <Route exact path='/'>
                             <Main
