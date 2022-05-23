@@ -1,4 +1,5 @@
 import React from "react";
+import InfoTooltip from "./InfoTooltip";
 
 class Login extends React.Component {
     constructor(props) {
@@ -10,8 +11,10 @@ class Login extends React.Component {
     }
     render() {
         return(
-            <div className='login'>
-                <h2 className='login__heading'>Вход</h2>
+            <>
+            <InfoTooltip />
+            <div className="login">
+                <h2 className="login__heading">Вход</h2>
                 <form className="form form_theme_dark">
                     <input
                         required
@@ -37,6 +40,7 @@ class Login extends React.Component {
                     </button>
                 </form>
             </div>
+            </>
         )
     }
 }
