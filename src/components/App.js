@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
+import { Route, Switch } from 'react-router-dom';
 import Header from './Header';
 import Main from "./Main";
+import Login from "./Login";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import EditProfilePopup from "./EditProfilePopup";
@@ -130,15 +132,24 @@ function App() {
             <CurrentUserContext.Provider value={currentUser}>
                 <div className="page">
                     <Header/>
-                    <Main
-                        onEditProfile={handleEditProfileClick}
-                        onAddPlace={handleAddPlaceClick}
-                        onEditAvatar={handleEditAvatarClick}
-                        onCardClick={handleCardClick}
-                        cards={cards}
-                        onCardLike={handleCardLike}
-                        onCardDelete={handleCardDelete}
-                    />
+
+                    <Switch>
+                        <Route exact path='/'>
+                            <Main
+                                onEditProfile={handleEditProfileClick}
+                                onAddPlace={handleAddPlaceClick}
+                                onEditAvatar={handleEditAvatarClick}
+                                onCardClick={handleCardClick}
+                                cards={cards}
+                                onCardLike={handleCardLike}
+                                onCardDelete={handleCardDelete}
+                            />
+                        </Route>
+                        <Route path='/sign-in'>
+                            <Login />
+                        </Route>
+                    </Switch>
+
                     <Footer/>
 
                     <EditProfilePopup
