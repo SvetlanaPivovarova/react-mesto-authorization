@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Header from './Header';
 import Main from "./Main";
 import Login from "./Login";
+import Register from "./Register";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import EditProfilePopup from "./EditProfilePopup";
@@ -18,6 +19,7 @@ function App() {
     const [selectedCard, setSelectedCard] = useState({});
     const [currentUser, setCurrentUser] = useState({});
     const [cards, setCards] = React.useState([]);
+    const [loggedIn, setLoggedIn] = React.useState(false);
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -134,6 +136,9 @@ function App() {
                     <Header/>
 
                     <Switch>
+                        <Route exact path="/">
+                            {loggedIn ? <Redirect to="/ducks" /> : <Redirect to="/login" />}
+                        </Route>
                         <Route exact path='/'>
                             <Main
                                 onEditProfile={handleEditProfileClick}
@@ -147,6 +152,9 @@ function App() {
                         </Route>
                         <Route path='/sign-in'>
                             <Login />
+                        </Route>
+                        <Route path='/sign-up'>
+                            <Register />
                         </Route>
                     </Switch>
 

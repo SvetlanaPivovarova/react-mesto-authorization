@@ -4,7 +4,7 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            email: '',
             password: ''
         }
     }
@@ -13,7 +13,6 @@ class Login extends React.Component {
             <div className='login'>
                 <h2 className='login__heading'>Вход</h2>
                 <form className="form form_theme_dark">
-
                     <input
                         required
                         className="form__text form__text_theme_dark"
@@ -30,14 +29,12 @@ class Login extends React.Component {
                         name="password"
                         type="password"
                     />
-                    <div className="login__button-container">
-                        <button
-                            type="submit"
-                            className="form__submit-btn form__submit-btn_theme_dark"
-                        >
-                            Войти
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        className="form__submit-btn form__submit-btn_theme_dark"
+                    >
+                        Войти
+                    </button>
                 </form>
             </div>
         )
