@@ -12,15 +12,11 @@ function Register({onRegister}) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        onRegister({
-            password: login.password,
-            email: login.email
-        });
+        console.log('login', login);
+        const { password, email } = login;
+        console.log(password);
+        onRegister(password, email);
     }
-
-
-
-
 
     return(
         <div className='login'>

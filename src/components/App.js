@@ -24,6 +24,7 @@ function App() {
     const [loggedIn, setLoggedIn] = React.useState(true);
 
     const handleRegister = (password, email) => {
+        console.log(password, email);
         register(password, email)
             .then(response => {
                 console.log('register:', response);
