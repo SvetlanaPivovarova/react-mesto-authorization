@@ -12,6 +12,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ProtectedRoute from "./ProtectedRoute";
+import { register } from "./../utils/auth";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -20,7 +21,14 @@ function App() {
     const [selectedCard, setSelectedCard] = useState({});
     const [currentUser, setCurrentUser] = useState({});
     const [cards, setCards] = React.useState([]);
-    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [loggedIn, setLoggedIn] = React.useState(true);
+
+    const handleRegister = (password, email) => {
+        register(password, email)
+            .then(response => {
+                console.log('register:', response);
+            })
+    }
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -160,7 +168,7 @@ function App() {
                             <Login />
                         </Route>
                         <Route path='/sign-up'>
-                            <Register />
+                            <Register onRegister={handleRegister}/>
                         </Route>
                     </Switch>
 
