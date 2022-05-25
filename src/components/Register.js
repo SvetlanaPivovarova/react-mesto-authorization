@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 function Register({onRegister}) {
     const [login, setLogin] = React.useState({ email: "", password: "" });
 
-
     const handleChange = (event) => {
         const { value, name } = event.target;
         setLogin({ ...login, [name]: value });
@@ -14,8 +13,9 @@ function Register({onRegister}) {
         e.preventDefault();
         console.log('login', login);
         const { password, email } = login;
-        console.log(password);
-        onRegister(password, email);
+        if (onRegister && password && email) {
+            onRegister(password, email);
+        }
     }
 
     return(
@@ -51,7 +51,7 @@ function Register({onRegister}) {
             </form>
             <div className="login__signin">
                 <p className="login__text">Уже зарегистрированы? </p>
-                <Link to="login" className="login__link">Войти</Link>
+                <Link to="/sign-in" className="login__link">Войти</Link>
             </div>
         </div>
     )

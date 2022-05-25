@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Route, Switch, useHistory} from 'react-router-dom';
 import Header from './Header';
 import Main from "./Main";
 import Login from "./Login";
+import LoginNew from "./LoginNew";
 import Register from "./Register";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
@@ -12,7 +13,10 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ProtectedRoute from "./ProtectedRoute";
-import { register } from "./../utils/auth";
+import * as auth from "../utils/auth";
+import toolTipIconSuc from '../images/successfuly.svg';
+import toolTipIconUnsuc from '../images/unsuccessfuly.svg';
+import InfoTooltip from "./InfoTooltip";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -20,15 +24,72 @@ function App() {
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
     const [currentUser, setCurrentUser] = useState({});
-    const [cards, setCards] = React.useState([]);
-    const [loggedIn, setLoggedIn] = React.useState(true);
+    const [cards, setCards] = useState([]);
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [userData, setUserData] = useState("");
+    const [tooltipMessage, setTooltipMessage] = useState('');
+    const [messageIcon, setMessageIcon] = useState('');
+    const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+
+    const history = useHistory();
 
     const handleRegister = (password, email) => {
-        console.log(password, email);
-        register(password, email)
+        auth.register(password, email)
             .then(response => {
-                console.log('register:', response);
+                if(response) {
+                    setIsInfoTooltipOpen(true);
+                    setTooltipMessage('Вы успешно зарегистрировались!');
+                    setMessageIcon(toolTipIconSuc);
+                    console.log('register:', response);
+                    setUserData(response.email);
+                    console.log('user:', userData);
+                    //history.push("/sign-in");
+                }
+                else {
+                    setIsInfoTooltipOpen(true);
+                    setTooltipMessage('Что-то пошло не так!\n' +
+                        'Попробуйте ещё раз.');
+                    setMessageIcon(toolTipIconUnsuc);
+                }
             })
+    }
+
+    const handleLogin = (password, email) => {
+        auth.login(password, email)
+            .then(response => {
+                console.log('auth:', response);
+                console.log('your token:', response.token);
+                if (response) {
+                    localStorage.setItem('jwt', response.token);
+                    setLoggedIn(true);
+                    history.push("/");
+                }
+            })
+    }
+
+    useEffect(() => {
+        checkToken()
+    }, [])
+
+    const checkToken = () => {
+      const jwt = localStorage.getItem('jwt');
+      console.log('jwt', jwt);
+      if (jwt) {
+          setLoggedIn(true);
+          auth.checkToken(jwt)
+              .then(response => {
+                  console.log('token:', response);
+                  setUserData(response.email);
+                  console.log('user:', userData);
+                  setLoggedIn(true);
+                  history.push('/');
+              })
+      }
+    }
+    
+    const handleSignOut = () => {
+      localStorage.removeItem('jwt');
+      setLoggedIn(false);
     }
 
     function handleEditAvatarClick() {
@@ -48,6 +109,9 @@ function App() {
         setIsEditProfilePopupOpen(false);
         setIsAddPlacePopupOpen(false);
         setSelectedCard({});
+        setIsInfoTooltipOpen(false);
+        setTooltipMessage('');
+        setMessageIcon('');
     }
 
     const handleCardClick = (card) => {
@@ -143,18 +207,9 @@ function App() {
         return (
             <CurrentUserContext.Provider value={currentUser}>
                 <div className="page">
-                    <Header/>
-
+                    <Header data={userData} />
                     <Switch>
-                        <ProtectedRoute
-                            exact path="/"
-                            loggedIn={loggedIn}
-                            component={Main}
-                        />
                         <Route exact path="/">
-                            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-up" />}
-                        </Route>
-                        <Route exact path='/'>
                             <Main
                                 onEditProfile={handleEditProfileClick}
                                 onAddPlace={handleAddPlaceClick}
@@ -166,14 +221,21 @@ function App() {
                             />
                         </Route>
                         <Route path='/sign-in'>
-                            <Login />
+                            <LoginNew onLogin={handleLogin} />
                         </Route>
                         <Route path='/sign-up'>
-                            <Register onRegister={handleRegister}/>
+                            <Register onRegister={handleRegister} />
                         </Route>
                     </Switch>
 
                     <Footer/>
+
+                    <InfoTooltip
+                        isOpen={isInfoTooltipOpen}
+                        messageIcon={messageIcon}
+                        tooltipMessage={tooltipMessage}
+                        onClose={closeAllPopups}
+                    />
 
                     <EditProfilePopup
                         isOpen={isEditProfilePopupOpen}
