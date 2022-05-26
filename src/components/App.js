@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Route, Switch, useHistory} from 'react-router-dom';
 import Header from './Header';
 import Main from "./Main";
 import Login from "./Login";
-import LoginNew from "./LoginNew";
 import Register from "./Register";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
@@ -34,55 +33,53 @@ function App() {
     const history = useHistory();
 
     const handleRegister = (password, email) => {
-        auth.register(password, email)
+        auth.register({ password, email })
+            .then(() => {
+                setIsInfoTooltipOpen(true);
+                setTooltipMessage('Вы успешно зарегистрировались!');
+                setMessageIcon(toolTipIconSuc);
+            })
             .then(response => {
-                if(response) {
-                    setIsInfoTooltipOpen(true);
-                    setTooltipMessage('Вы успешно зарегистрировались!');
-                    setMessageIcon(toolTipIconSuc);
-                    console.log('register:', response);
-                    setUserData(response.email);
-                    console.log('user:', userData);
-                    //history.push("/sign-in");
-                }
-                else {
-                    setIsInfoTooltipOpen(true);
-                    setTooltipMessage('Что-то пошло не так!\n' +
-                        'Попробуйте ещё раз.');
-                    setMessageIcon(toolTipIconUnsuc);
-                }
+                history.push("/sign-in");
+            })
+            .catch(err => {
+                setIsInfoTooltipOpen(true);
+                setTooltipMessage('Что-то пошло не так!\n' +
+                    'Попробуйте ещё раз.');
+                setMessageIcon(toolTipIconUnsuc);
+                console.log(err);
             })
     }
 
     const handleLogin = (password, email) => {
-        auth.login(password, email)
-            .then(response => {
-                console.log('auth:', response);
-                console.log('your token:', response.token);
-                if (response) {
-                    localStorage.setItem('jwt', response.token);
-                    setLoggedIn(true);
-                    history.push("/");
-                }
+        auth.authorize(password, email)
+            .then((response) => {
+                setLoggedIn(true);
+                console.log('logged:', loggedIn);
+                setUserData(email);
+                history.push("/");
+            })
+            .catch((err) => {
+                console.log(err.message);
             })
     }
 
-    useEffect(() => {
+    React.useEffect(() => {
         checkToken()
-    }, [])
+    }, []);
 
     const checkToken = () => {
       const jwt = localStorage.getItem('jwt');
       console.log('jwt', jwt);
       if (jwt) {
-          setLoggedIn(true);
           auth.checkToken(jwt)
-              .then(response => {
-                  console.log('token:', response);
-                  setUserData(response.email);
-                  console.log('user:', userData);
+              .then((response) => {
+                  setUserData(response.data.email);
                   setLoggedIn(true);
                   history.push('/');
+              })
+              .catch((err) => {
+                  console.log(err);
               })
       }
     }
@@ -207,9 +204,9 @@ function App() {
         return (
             <CurrentUserContext.Provider value={currentUser}>
                 <div className="page">
-                    <Header data={userData} />
+                    <Header data={userData} loggedIn={loggedIn} onSignOut={handleSignOut}/>
                     <Switch>
-                        <Route exact path="/">
+                        <ProtectedRoute exact path="/" isLoggedIn={loggedIn}>
                             <Main
                                 onEditProfile={handleEditProfileClick}
                                 onAddPlace={handleAddPlaceClick}
@@ -219,9 +216,9 @@ function App() {
                                 onCardLike={handleCardLike}
                                 onCardDelete={handleCardDelete}
                             />
-                        </Route>
+                        </ProtectedRoute>
                         <Route path='/sign-in'>
-                            <LoginNew onLogin={handleLogin} />
+                            <Login onLogin={handleLogin} />
                         </Route>
                         <Route path='/sign-up'>
                             <Register onRegister={handleRegister} />

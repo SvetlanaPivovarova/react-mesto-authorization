@@ -1,5 +1,4 @@
 import React from "react";
-import InfoTooltip from "./InfoTooltip";
 
 function Login({onLogin}) {
     const [login, setLogin] = React.useState({});
@@ -7,20 +6,16 @@ function Login({onLogin}) {
     const handleChange = (event) => {
         const { value, name } = event.target;
         setLogin({ ...login, [name]: value });
+        console.log('signed login:', login);
     };
 
     function handleSubmit(e) {
         e.preventDefault();
-        //console.log('login', login);
-        const { password, email } = login;
-        if (onLogin && password && email) {
-            onLogin(password, email);
-        }
+        console.log('signed login:', login);
+        onLogin(login.password, login.email);
     }
 
     return(
-        <>
-            <InfoTooltip />
             <div className="login">
                 <h2 className="login__heading">Вход</h2>
                 <form className="form form_theme_dark" onSubmit={handleSubmit}>
@@ -30,7 +25,7 @@ function Login({onLogin}) {
                         placeholder="Email"
                         id="email"
                         name="email"
-                        type="url"
+                        type="e-mail"
                         value={login.email || ''}
                         onChange={handleChange}
                     />
@@ -52,7 +47,6 @@ function Login({onLogin}) {
                     </button>
                 </form>
             </div>
-        </>
     )
 }
 

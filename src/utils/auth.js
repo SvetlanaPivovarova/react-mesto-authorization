@@ -1,40 +1,53 @@
 const BASE_URL = 'https://auth.nomoreparties.co';
 
-export const register = (password, email) => {
-    return fetch(`${BASE_URL}/signup`, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            "password": password,
-            "email": email
-        })
-    })
-        .then(checkResponse)
-        .catch(err => {
-            console.log(err);
-        })
+function checkResponse(res) {
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
 }
 
-export const login = (password, email) => {
-    return fetch(`${BASE_URL}/signin`, {
-        method: "POST",
+export const register = ( {password, email} ) => {
+    return fetch(`${BASE_URL}/signup`, {
+        method: 'POST',
         headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            "password": password,
-            "email": email
-        }),
-    })
-        .then(checkResponse)
-        .catch((err) => {
-            console.log(err);
+            password: password,
+            email: email
         })
-}
+    }).then((res) => {
+        console.log(res);
+        return checkResponse(res);
+    });
+};
+
+export const authorize = (password, email) => {
+    return fetch(`${BASE_URL}/signin`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+            {
+                "password": password,
+                "email": email
+            }
+        )
+    })
+        .then((response => response.json()))
+        .then((data) => {
+            if (data.token){
+                localStorage.setItem('jwt', data.token);
+                console.log('setted jwt', data.token);
+                return data.token;
+            }
+        })
+        .catch(err => console.log(err))
+};
 
 export const checkToken = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
@@ -46,22 +59,12 @@ export const checkToken = (token) => {
         }
     })
         .then(res => {
-            if (res.status === 200) {
+            if (res.ok) {
                 return res.json();
             }
+            else {
+                console.log(`Ошибка: ${res.status}`);
+            }
         })
-        .then(res => res)
-        .catch(err => {
-            console.log(err);
-        })
-}
-
-const checkResponse = (response) => {
-    if (response.ok) {
-        console.log('result:', response);
-        return response.json();
-    }
-    return response.json().then(res => {
-        throw res.error;
-    })
+        .then(data => data)
 }
