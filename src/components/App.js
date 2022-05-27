@@ -39,7 +39,7 @@ function App() {
                 setTooltipMessage('Вы успешно зарегистрировались!');
                 setMessageIcon(toolTipIconSuc);
             })
-            .then(response => {
+            .then(() => {
                 history.push("/sign-in");
             })
             .catch(err => {
@@ -53,14 +53,23 @@ function App() {
 
     const handleLogin = (password, email) => {
         auth.authorize(password, email)
-            .then((response) => {
+            .then(() => {
                 setLoggedIn(true);
                 console.log('logged:', loggedIn);
                 setUserData(email);
+                setIsInfoTooltipOpen(true);
+                setTooltipMessage('Вы успешно авторизовались!');
+                setMessageIcon(toolTipIconSuc);
+            })
+            .then(() => {
                 history.push("/");
             })
             .catch((err) => {
-                console.log(err.message);
+                setIsInfoTooltipOpen(true);
+                setTooltipMessage('Что-то пошло не так!\n' +
+                    'Попробуйте ещё раз.');
+                setMessageIcon(toolTipIconUnsuc);
+                console.log(err);
             })
     }
 
