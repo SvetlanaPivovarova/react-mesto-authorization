@@ -52,4 +52,4 @@
 Дополнительные сведения см. в разделе о развертывании [deployment](https://facebook.github.io/create-react-app/docs/deployment) .
 
 **Размещение проекта**
-* [Место](https://svetlanapivovarova.github.io/mesto-react/)
+* [Место](https://svetlanapivovarova.github.io/react-mesto-authorization/)
