@@ -17,10 +17,10 @@ function Header({loggedIn, data, onSignOut}) {
                 :
                 (<>
                     <Route path="/sign-up">
-                        <Link to="/sign-up" className="header__navigation-link header__nav-reg">Регистрация</Link>
+                        <Link to="/sign-in" className="header__navigation-item header__navigation-item_type_link">Войти</Link>
                     </Route>
                     <Route path="/sign-in">
-                        <Link to="/sign-in" className="header__navigation-link">Войти</Link>
+                        <Link to="/sign-up" className="header__navigation-item header__navigation-item_type_link">Регистрация</Link>
                     </Route>
                 </>)
             }

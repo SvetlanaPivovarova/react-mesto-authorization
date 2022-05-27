@@ -8,7 +8,7 @@
 @import url(./blocks/header/__navigation/header__navigation.css);
 @import url(./blocks/header/__navigation-item/header__navigation-item.css);
 @import url(./blocks/header/__exit-button/header__exit-button.css);
-@import url(./blocks/header/__navigation-link/header__navigation-link.css);
+@import url(./blocks/header/__navigation-item/_type/header__navigation-item_type_link.css);
 
 @import url(./blocks/content/content.css);
 @import url(./blocks/content/__section/content__section.css);
